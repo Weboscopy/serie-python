@@ -1,161 +1,174 @@
-# initialisation
-name = 'Paul'
-name = str("Paul")
+# list 
+users = ["Tom", "Zoé", "Sara", "Chloé"]
+mylist = list([1, "tom@mail.com", True])
+empty_list = []
 
-print(name)
+print(users[0])
+print(users[-1])
+print(users[0:2])
+print(users[:2])
+print(users[:-1])
+print(users[::2])
+print(users[::-1])
+print(users.index("Sara"))
+print("Zoé" in users)
 
-# multiline string 
-multiline = """
-    <h1>Titre</h1>
-    <h2>Sous-titre</h2>
-"""
+users.append("Elsa")
+print(users)
+users.extend(["Mia", "Nora"])
+print(users)
+users += ["Adam", "Jade"]
+print(users)
+users.insert(1, "Yanis")
+print(users)
 
-print(multiline)
+users[2:2] = ["Alex", "Julie"] # insetion 
+print(users)
+users[1:3] = ["Anna", "Nora"] # remplacer
+print(users)
 
-# casting 
-decade = 1980
-decade = str(decade)
+users.pop()
+print(users)
+users.remove("Anna")
+print(users)
+del users[0]
+print(users)
 
-# concatenation
-sentence = "J'aime la musique des années " + decade 
-print(sentence)
+mylist.clear()
+print(mylist)
 
-# escaping 
-sentence = 'J\'aime coder en : \n \t python \n \t javascript'
-print(sentence)
+users.sort()
+print(users)
+users[0] = "adam"
+users.sort(key=str.lower)
+print(users)
+users.reverse()
+print(users)
 
-# slicing 
-website = "https://google.com"
-protocol = website[0:4]
-protocol = website[:4]
-print(protocol)
-url = website[8:]
-print(url)
-tld = website[-4:]
-print(tld)
-sld = website[8:-4]
-print(sld)
-crazy_url = website[0:18:2]
-print(crazy_url)
-reversed_url = website[::-1]
-print(reversed_url)
+print(sorted(users)) # crée une copie de la liste users
 
-# formatting
-name1 = "Paul"
-name2 = "Tom"
+for item in users:
+    print(item)
 
-print("%s est l'ami de %s" % (name1, name2))
-print("{} est l'ami de {}".format(name1, name2))
-print("{1} est l'ami de {0}".format(name1, name2))
-print("{name1} est l'ami de {name2}".format(name1=name2, name2=name1))
-print(f"{name1} est l'ami de {name2}")
+for index, item in enumerate(users):
+    print(index, item)
 
-person = {"name": "Zoé", "age" : 28}
-print(f"Son nom est {person["name"]}, et elle a {person["age"]}")
-print(f"Son nom est {person["name"].upper()}, et elle a {2 * 10}")
+users_string = ','.join(users)
+print(users_string)
 
-pi = 3.1415927
-bigNumber = 1000000000
-print(f"Le nombre pi vaut {pi:.3f}")
-print(f"Le nombre formaté correctement {bigNumber:,}")
-print(f"Le nombre formaté correctement {bigNumber:,.2f}")
-print(f"Le nombre en binaire {bigNumber:b}")
-print(f"Le nombre en notation scientifique {bigNumber:E}")
 
-for i in range(1, 11):
-    sentence = "Valeur : {:03}".format(i)
-    print(sentence)
+# tuple
+black = (255, 255, 255)
+# black[0] = 32
+(red, *rest) = black 
+print(red, rest)
+(red, *green, blue) = black 
+print(red, green, blue)
+white = tuple((0,0,0))
+print(black.count(255))
+print(white*3)
 
-for num in range(1,11):
-    print(f"\n {num} divisé par 4.3 vaut {num / 4.3:.2%}")
+names = ["Alice", "Zoé", "Yanis"]
+scores = [20, 30, 12]
+results = list(zip(names, scores))
+print(results)
+for name, score in results:
+    print(name, score)
 
-from datetime import datetime 
-import locale 
+color = {"red" : 120, "green": 20, "blue" : 139}
+color["red"] = 222
+print(color)
+from collections import namedtuple
+Color = namedtuple("Color", ["red", "green", "blue"])
+color = Color(66, 120, 88)
+color = Color(red=66, green=120, blue=88)
+# color[0] = 20
+print(color[0])
+print(color.red)
 
-locale.setlocale(locale.LC_TIME, "fr_FR")
 
-birthday = datetime(1988, 2, 12)
-sentence = f"Mon anniversaire tombe le {birthday:%d %B %Y}"
-sentence = f"Le {birthday:%d %B %Y} tombe le {birthday:%A} qui était le {birthday:%j} jour de l'année"
-print(sentence)
+# set 
+myset = {1,2,3,4,4,4}
+print(myset)
+myset2 = set((1,2,3,4,4))
+empty_set = set()
 
-today_date = datetime.now()
-print(today_date)
-print(today_date.strftime("%d_%B_%Y"))
+nums_list = [2,4,1,8,8,7,7,1,1,1,1]
+nums_set = set(nums_list)
+print(nums_set)
 
-print(dir(str))
-help(str.lower)
+original_list = [1,2,3,4,4,4,8]
+unique_list = list(set(original_list))
+print(unique_list)
 
-message = "SALut ToUt LE MonDE"
-message = message.lower()
-print(message)
-print(message.upper())
-print(message.swapcase())
-print(message.title())
-print(message.capitalize())
+print(min(nums_set))
+print(max(nums_set))
+print(sum(nums_set))
+print(sum(nums_list))
+print(3 in nums_set)
 
-# print(message.index("z"))
-print(message.find("z"))
-print(message.rfind("l"))
+nums_set.remove(2)
+# nums_set.remove(3)
+nums_set.discard(3)
 
-text = "text"
-print(text.isalpha())
-print(text.islower())
-price = "99"
-print(price.isdigit())
-password = "pass123"
-print(password.isalnum())
-print("    ".isspace())
-title = "Le Premier Chapitre"
-print(title.istitle())
-text = "Salut, Pythön!"
-print(text.isascii())
-print(message.startswith("salut"))
-print(message.endswith("monde"))
+nums_set.add(9)
+others = {3,5}
+nums_set.update(others)
+print(nums_set)
 
-print(message.replace("salut", "hello"))
-message = "     salut tout le monde"
-print(message)
-print(message.strip())
-file = "image.png"
-print(file.removesuffix(".png"))
-print(file.strip(".png"))
-print(file[:-4])
-print(website.removeprefix("https://"))
+a = {1,2,3}
+b = {4,5,6}
+c = a.union(b)
+c = a | b 
+print(c)
 
-text = "Hello, World! こんにちは世界!"
-encoded_text = text.encode("utf-8")
-print(encoded_text)
+a = {1,2,3}
+b = {2,3,4}
+c = a & b 
+print(a.intersection(b))
 
-text = "text"
-print(text*3)
-print(text.zfill(6))
+print(a.difference(b))
+c = a - b
 
-list = ["Le", "Premier", "Chapitre"]
-slug = ("-").join(list)
-sentence = (" ").join(list)
-print(slug)
-print(sentence)
-results = "42;49;38;20"
-print(results.split(";"))
-text = "a+b=c"
-print(text.partition("="))
-text = "Un message sur \n plusieurs \n lignes \n.."
-print(text.splitlines())
-print(text.splitlines(keepends=True))
+print(a.symmetric_difference(b))
+c = a ^ b 
 
-import glob 
+a.symmetric_difference_update(b)
+print(a)
 
-filepaths = glob.glob("*.txt")
+# dictionnaire
+post = {"id" : 1, "author": "Tom", "published" : True}
+product = dict(name="T-shirt", price=20)
+empty_dict = {}
+print("title" in post)
 
-tag = "h1"
+keys = list(post.keys())
+values = list(post.values())
+items = list(post.items())
+print(keys)
+print(values)
+print(items)
 
-for file in filepaths:
-    if file.startswith("2024"):
-        date_string = file.removesuffix(".txt")
-        year, month, day = date_string.split("_")
-        dict = {"year" : year, "month" : month, "day" : day}
-        date = datetime.strptime(date_string, "%Y_%m_%d")
-        text = "Le " + date.strftime("%d %B %Y")
-        html = f"<{tag}>{text}</{tag}>"
-        print(html)
+for key, val in post.items():
+    print(f"{key} : {val}")
+
+print(post.get("published"))
+print(post["author"])
+
+post["author"] = "Yanis"
+print(post)
+post.update({"author" : "Zoé", "published" : False})
+print(post)
+
+post.popitem()
+print(post)
+del post["author"]
+print(post)
+
+students = {"Tom": 9, "Zoé": 7, "Alice": 7, "Yanis": 9, "Nora": 8, "Sara": 8, "Matteo": 7}
+scores = list(students.values())
+
+for score in set(scores):
+    num = scores.count(score)
+    print(f"{num} élèves ont obtenu {score}")
+
