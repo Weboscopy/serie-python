@@ -1,193 +1,106 @@
-def hello():
-    print("hello")
+
+def original_func(name):
+    print(f"Salut {name}")
 
 
-hello()
-hello()
-hello()
-hello()
-hello()
-hello()
+original_func("Zoé")
 
-# def add(num1, num2):
-#     print(num1 + num2)
+from datetime import datetime
 
-# add(3, 7)
+def decorator_func(original_func):
+    def wrapper_func(*args, **kwargs):
+       print(datetime.now().strftime("%d-%m-%Y %H:%M:%S"))
+       return original_func(*args, **kwargs)
 
-def add(num1, num2):
-   return num1 + num2
+    return wrapper_func
 
 
-result = add(8, 9)
+decorated_func = decorator_func(original_func)
 
-print(result)
-
-# paramètres par défaut
-
-def add_default(num1, num2=2):
-    return num1 + num2 
+decorated_func("Tom")
 
 
-c = add_default(2)
-print(c)
 
-# fonctions variadiques
-
-def add_multiple(*args):
-    mysem = 0 
-    for i in args:
-        mysem += i 
-    print(mysem)
+@decorator_func
+def original_func(name):
+    print(f"Salut {name}")
 
 
-add_multiple(1,2,3,4,5,6,7)
+original_func("Jade")
 
 
-def say_hello(**kwargs):
-    print(f"Salut {kwargs["first"]} {kwargs["last"]}")
-
-say_hello(first="John", last="Lenon")
-
-
-# composition de fonctions
-print(round(abs(float(input(" Entrez un number : ")))))
-
-# fonctions callback
-
-def process_nums(numbers, callback):
-    processed = []
-    for number in numbers:
-        processed.append(callback(number))
-    return processed
-
-def square(x):
-    return x * x 
-
-def double(x):
-    return 2 * x
-
-print(process_nums([1,2,3,4,5], double))
-
-# la portée des variables
-
-name = "Tom"
-
-def get_name():
-    name = "John"
-    print(name)
-
-get_name()
-print(name)
-
-def get_name():
-    global name 
-    name = "John"
-    print(name)
-
-get_name()
-print(name)
+@decorator_func
+def add_10(num):
+    print(num + 10)
 
 
-def get_score():
-    score = 20 
-    def update_score():
-        score = 30
+add_10(20)
+
+# décorateurs avec arguments
+def add_prefix(prefix):
+    def decorator_func(original_func):
+        def wrapper_func(*args, **kwargs):
+            print(prefix)
+            return   original_func(*args, **kwargs)
+        return wrapper_func
+    return decorator_func
+
+
+@add_prefix("[INFO]")
+def get_info(msg):
+    print(msg)
+
+@add_prefix("[ERROR]")
+def get_error(error):
+    print(error)
+
+get_info("Un document a été ajouté")
+get_error("Une erreur est survenue")
+
+from functools import wraps 
+
+def logger_decorator(original_func):
+
+    @wraps(original_func)
+    def wrapper_func(*args, **kwargs):
+       result = original_func(*args, **kwargs)
+       print(f"{datetime.now()}  - {original_func.__name__} - args : {args} - kwargs : {kwargs}")
+       return result 
+    return wrapper_func
+
+
+import time 
+def timer_decorator(original_func):
+    @wraps(original_func)
+    def wrapper_func(*args, **kwargs):
+        t1 = time.time()
+        result = original_func(*args, **kwargs)
+        t2 = time.time() - t1 
+        print(f"{original_func.__name__} a mis {t2} à s'exécuter")
+        return result 
+    return wrapper_func
+
+
+@timer_decorator
+@logger_decorator
+def get_user_info(user):
+    print(f"Nom : {user["name"]} ; age : {user["age"]}")
+
+
+get_user_info({"name" : "Tom", "age" : 28}) 
+
+
+class decorator_class():
+    def __init__(self, original_func):
+        self.original_func = original_func
     
-    print(score)
-    update_score()
-    print(score)
-
-get_score()
-
-def get_score():
-    score = 20 
-    def update_score():
-        nonlocal score 
-        score = 30
+    def __call__(self, *args, **kwargs):
+       print(f"{datetime.now()}  - {self.original_func.__name__} - args : {args} - kwargs : {kwargs}")
+       return  self.original_func(*args, **kwargs)
     
-    print(score)
-    update_score()
-    print(score)
 
-get_score()
+@decorator_class
+def get_user_info(user):
+    print(f"Nom : {user["name"]} ; age : {user["age"]}")
 
-# closures
-
-def counter(val):
-    print(f"Montant initial {val}")
-    def decrement():
-        nonlocal val 
-        val -= 10 
-        if(val <= 0):
-            print("Votre compteur est vide")
-        else:
-            print(f"Il vous rest {val} dans votre compteur")
-
-    return decrement
-
-charge = counter(40)
-
-charge()
-charge()
-charge()
-charge()
-charge()
-
-# fonctions curry 
-def multiply_standard(num1, num2):
-    return num1 * num2 
-
-print(multiply_standard(2,3))
-
-def multiply_curry(num1):
-    def by(num2):
-        return num1 * num2 
-    
-    return by 
-
-
-print(multiply_curry(2)(3))
-
-# fonctions partielles 
-multiply_by_10 =  multiply_curry(10)
-
-print(multiply_by_10(2))
-print(multiply_by_10(3))
-print(multiply_by_10(4))
-print(multiply_by_10(5))
-print(multiply_by_10(6))
-
-# fonctions lambda 
-def multiply_lambda(num1):
-    return lambda num2 : num1 * num2 
-
-multiply_by_3 = multiply_lambda(3)
-print(multiply_by_3(4))
-print(multiply_by_3(5))
-
-# fonctions récursives
-
-user = {
-    'username': "tom",
-    'location': {
-        'city': "Rome",
-        'coord': {
-            'lat': 44.2,
-            'lng': 32.1
-        }
-    },
-    'age': 28
-}
-
-def get_all_values(d):
-    values = []
-
-    for value in d.values():
-        if not isinstance(value, dict):
-            values.append(value)
-        else:
-           values.extend(get_all_values(value))
-
-    return values
-
-print(get_all_values(user))
+get_user_info({"name" : "Tom", "age" : 28}) 
