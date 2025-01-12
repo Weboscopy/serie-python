@@ -1,0 +1,12 @@
+<data>
+    <user>
+        <name>Tom</name>
+        <age>30</age>
+        <city>Paris</city>
+    </user>
+    <user>
+        <name>Zoé</name>
+        <age>25</age>
+        <city>Marseille</city>
+    </user>
+</data>
