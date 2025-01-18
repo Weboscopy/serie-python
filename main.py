@@ -1,194 +1,144 @@
-# import math
-# import custom_math
-from custom_math import double as custom_math_double
+# date 
+from datetime import date 
+d = date(2016, 7, 23)
+print(d)
+d = date.fromisoformat("2015-07-23")
+print(d)
 
-from math import ceil, floor, sqrt
+today = date.today()
+print(today)
 
-num = 20.89
+print(today.day)
+print(today.month)
+print(today.year)
+print(today.weekday()) # indexé de 0 à 6
+print(today.isoweekday())  # indexé de 1 à 7
 
-print(ceil(num))
-print(floor(num))
-print(sqrt(num))
-print(custom_math_double(num))
+one_year_from_today = today.replace(year = today.year + 1)
+print(one_year_from_today)
 
-from werkzeug.security import generate_password_hash
-from package_math.algebra import add
-from package_math.geometry import square_area
+# formatting
+import locale 
+locale.setlocale(locale.LC_TIME, "fr_FR")
+print(f"Le {today: %d %B %Y} tombe un {today:%A} qui est le {today:%j} jour de l'année")
+print(today.isoformat(), type(today.isoformat()))
 
+# time 
+from datetime import time as datetime_time
+t = datetime_time(9, 30, 45)
+print(t)
+print(t.minute)
+print(t.hour)
 
-hashed_pass = generate_password_hash("123")
-print(hashed_pass)
+# datetime 
+from datetime import datetime
+dt = datetime(2024, 12, 22, 10, 24, 44)
+print(dt)
+print(dt.year)
+print(dt.minute)
+print(dt.date())
+print(dt.time())
 
-print(add(2, 9))
-print(square_area(2))
-
-# random
-import random
-
-value = random.random()
-print(value)
-value = random.uniform(1, 10)
-print(value)
-value = random.randint(1, 10)
-print(value)
-
-names = ["Tom", "Zoé", "Yanis", "Nora", "Chloé"]
-value = random.choice(names)
-print(value)
-value = random.choices(names, k=10)
-print(value)
-value = random.choices(names, weights=[1, 2, 2, 1, 15], k=10)
-print(value)
-
-deck = list(range(1, 53))
-print(deck)
-random.shuffle(deck)
-print(deck)
-hand = random.sample(deck, k=5)
-print(hand)
-
-# uuid
-import uuid
-
-unique_id = uuid.uuid4()
-print(unique_id)
-
-# html
-import html
-
-unsafe_html = '<script>alert("Vous avez été hacké!");</script>'
-safe_text = html.escape(unsafe_html)
-print(safe_text)
-
-# xml
-import xml.etree.ElementTree as ET
-
-tree = ET.parse("data.xml")
-root = tree.getroot()
-
-for user in root.findall("user"):
-    name = user.find("name").text
-    print(f"Nom : {name}")
-
-# json
-import json
-
-original_users = """
-{
-    "user": [
-        {
-        "name":"Tom",
-        "phone": "+33 6 77 77 77 77",
-        "emails": ["tom@mail.com", "tom@mail.fr"],
-        "verified": false
-        },
-        {
-        "name":"Paul",
-        "phone": "+33 6 44 44 44 44",
-        "emails": null,
-        "verified": true
-        }
-    ]
-}
-"""
-data = json.loads(original_users)
-print(data)
-
-for user in data["user"]:
-    del user["phone"]
-
-new_users = json.dumps(data, indent=2, sort_keys=True)
-print(new_users)
-
-# urllib
-from urllib.request import urlopen
-
-url = "https://jsonplaceholder.typicode.com/posts"
-response = urlopen(url)
-data = json.loads(response.read())
-print(data)
-response.close()
-
-# requests (module externe)
-import requests
-
-response = requests.get(url)
-data = response.json()
-print(data)
-
-# logging
-import logging
-
-logger = logging.getLogger("mylogger")
-logger.setLevel(logging.DEBUG)
-
-console_handler = logging.StreamHandler()
-console_formatter = logging.Formatter("%(levelname)s : %(message)s")
-console_handler.setFormatter(console_formatter)
-
-file_handler = logging.FileHandler("example.log")
-file_formatter = logging.Formatter("%(asctime)s : %(levelname)s : %(message)s")
-file_handler.setFormatter(file_formatter)
-file_handler.setLevel(logging.ERROR)
+now = datetime.now()
+print(now)
 
 
-logger.addHandler(console_handler)
-logger.addHandler(file_handler)
+# files' date 
+import os 
+print(os.stat("demo.txt"))
+modified_time = os.stat("demo.txt").st_mtime # temps unix, temps en sec depuis 01 janv 1970 
+print(datetime.fromtimestamp(modified_time))
 
+# date from string 
+date_string = "12 juillet 1997"
+date_obj = datetime.strptime(date_string, "%d %B %Y")
+print(date_obj)
 
-def divide(x, y):
-    try:
-        result = x / y
-    except ZeroDivisionError as e:
-        logger.error("Tentative de division par zéro")
-    else:
-        return result
+# date to string 
+today_string = today.strftime("Le %A %d %b %Y")
+print(today_string)
 
+# time delta 
+from datetime import timedelta 
+tdelta = timedelta(hours=12)
+print(tdelta)
+tdelta = timedelta(days=7)
+print(tdelta)
+print(today + tdelta)
 
-num1 = 20
-num2 = 0
-result = divide(num1, num2)
-logger.debug(f"Division : {num1} / {num2} = {result}")
-logger.info(f"Division : {num1} / {num2} = {result}")
-logger.warning(f"Division : {num1} / {num2} = {result}")
+bthday = date.fromisoformat("2025-08-21")
+till_birthday = abs(bthday - today)
+print(f"Il reste {till_birthday} jours avant mon anniversaire")
+print(f"Il reste {till_birthday.total_seconds()} secondes avant mon anniversaire")
 
-# argparse
-import argparse
-from package_math.geometry import rectangle_area
+# timezone 
+from datetime import timezone 
+now_utc = datetime.now(tz=timezone.utc)
+print(now_utc)
 
+france_offset = timedelta(hours=2)
+now_france = now_utc.astimezone(timezone(france_offset))
+print(now_france)
 
-def calculate_area(shape, dimensions):
-    result = None
-    if shape == "rectangle":
-        result = rectangle_area(dimensions[0], dimensions[1])
-    elif shape == "square":
-        result = square_area(dimensions[0])
-    print(result)
+import zoneinfo 
+available_timezones = zoneinfo.available_timezones()
+print(available_timezones)
 
+now_utc = datetime.now(tz=zoneinfo.ZoneInfo("UTC"))
+print(now_utc)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Calcule la surface d'une forme en fonctions de ses dimensions"
-    )
+now_france = now_utc.astimezone(zoneinfo.ZoneInfo("Europe/Paris"))
+print(now_france)
 
-    parser.add_argument(
-        "-s",
-        "--shape",
-        required=True,
-        choices=["square", "rectangle"],
-        metavar="Forme",
-        help="Forme de la surface (square ou rectangle)",
-    )
+# time 
+import time 
+print("avant")
+time.sleep(1)
+print("après")
+print(time.ctime(0))
+print(time.time())
+print(time.ctime(time.time()))
+print(time.ctime())
 
-    parser.add_argument(
-        "-d",
-        "--dimensions",
-        required=True,
-        type=float,
-        nargs="+",
-        metavar="Dimensions",
-        help="Dimensions de la forme, 1 nombre pour le carré, 2 nombres pour le rectangle",
-    )
+time_struct_utc = time.gmtime()
+print(time_struct_utc)
+time_struct_local = time.localtime()
+print(time_struct_local)
+time_tuple = (2020, 4, 20, 20, 30, 0, 0, 111, 1)
+time_string = time.asctime(time_tuple)
+print(time_string)
+unix_time = time.mktime(time_tuple)
+print(unix_time)
+unix_today = time.mktime(today.timetuple())
+print(unix_today)
 
-    args = parser.parse_args()
-    calculate_area(args.shape, args.dimensions)
+# calendar 
+
+import calendar 
+
+year = 2024 
+
+for month in range(1, 13):
+    print(calendar.month_name[month])
+    print(calendar.month(year, month))
+    print(calendar.monthrange(year, month))
+    print(calendar.monthrange(year, month)[0])
+    print(calendar.monthrange(year, month)[1])
+
+# cas concret 
+balance = 4000 
+monthly_payment = 300 
+
+today = date.today()
+
+days_in_current_month = calendar.monthrange(today.year, today.month)[1]
+
+days_until_end_month = days_in_current_month - today.day 
+
+end_date = today + timedelta(days=days_until_end_month + 1)
+
+while balance > 0 :
+    balance -= monthly_payment
+    print(end_date, balance)
+    days_in_current_month = calendar.monthrange(end_date.year, end_date.month)[1]
+    end_date = end_date + timedelta(days= days_in_current_month)
