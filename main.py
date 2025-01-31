@@ -1,258 +1,170 @@
-# os 
+file = open("test.txt")
+
+# lecture
+
+content = file.read()
+print(content)
+
+print("##################")
+
+file.seek(0)
+content = file.read(15)
+print(content)
+
+print("##################")
+
+file.seek(27)
+content = file.read()
+print(content)
+
+print("##################")
+file.seek(0)
+for line in file:
+    print(line.rstrip())
+
+
+print("##################")
+file.seek(0)
+lines = file.readlines()
+print(lines)
+
+file.close()
+
+# écriture 
+file = open("demo.txt", "w")
+file.write("Voici le contenu du fichier \n")
+file.close()
+
+file = open("demo.txt", "w")
+file.write("remplacer l'ancien contenu \n")
+file.close()
+
+
+# ajout 
+file = open("demo.txt", "a")
+file.write("Le nouveau contenu du fichier \n")
+lines = ["voici un ajout d'une ligne \n", "une autre ligne \n"]
+file.writelines(lines)
+file.close()
+
+# création 
 import os 
+if not os.path.exists("essai.txt"):
+    file = open("essai.txt", "x")
+    file.close()
 
-# navigation 
-print(os.getcwd())
-
-os.chdir("dossier1")
-
-print(os.getcwd())
-
-# chemins absolus 
-
-os.chdir("C:\\Users\\Louis\\Desktop\\python\\07 - système de fichiers\\dossier2")
-
-print(os.getcwd())
-
-os.chdir(r"C:\Users\Louis\Desktop\python\07 - système de fichiers")
-
-print(os.getcwd())
-
-# conditions
-
-filepath = r"dossier2\demo.txt"
-
-if os.path.exists(filepath):
-    print("Ce chemin existe")
-    if os.path.isfile(filepath):
-        print("Il s'agit d'un fichier")
-
-folder_path = "dossier2"
-
-if os.path.isdir(folder_path):
-    print("Il s'agit d'un dossier")
-
-# combiner des chemins 
-
-input_folder = os.path.join(os.getcwd(), r"input_dir\data")
-
-# création
-if not os.path.exists(input_folder):
-    os.makedirs(input_folder)
-
-# déplacement 
-src = r"dossier2\demo.txt"
-dest = "demo.txt"
+# gestion des ressources
+try:
+    f = open("test.txt")
+    print(f.read())
+except:
+    print("une erreur est survenue")
+else:
+    f.close()
 
 try:
-    os.replace(src, dest)
+    f = open("test.txt", "r")
+    content = f.read()
 except FileNotFoundError:
-    print("Ce chemin n'existe pas")
-
-# renommage 
-try:
-    os.rename("demo.txt", "renamed_demo.txt")
-except FileNotFoundError:
-    print("Ce chemin n'existe pas")
-
-# suppression 
-try:
-    os.rmdir("dossier3")
-except FileNotFoundError:
-    print("Ce chemin n'existe pas")
-
-try:
-    os.removedirs(r"dossier4\2024\janvier")
-except FileNotFoundError:
-    print("Ce chemin n'existe pas")
-
-# variables d'environnement 
-os.environ["HOME"] = r"user\home"
-
-home_dir = os.path.join(os.getcwd(), os.environ.get("HOME"))
-
-print(home_dir)
-
-# informations sur les fichiers
-print(os.stat("renamed_demo.txt"))
-
-# méthodes utiles 
-filepath = os.path.join(os.getcwd(), "renamed_demo.txt")
-print(os.path.basename(filepath))
-print(os.path.dirname(filepath))
-print(os.path.split(filepath))
-print(os.path.splitext(filepath))
-print(os.path.abspath(__file__))
-
-# lancer un fichier 
-# os.startfile(filepath)
-
-# boucles
-for filepath in os.listdir():
-    print(filepath)
-
-os.chdir("courses")
-
-# for f in os.listdir():
-#     f_name, f_ext = os.path.splitext(f)
-#     f_title, f_course, f_num = f_name.split("-")
-#     new_name = f"{f_num}-{f_title}{f_ext}"
-#     os.rename(f, new_name)
-
-os.chdir(os.pardir)
-
-for dirpath, dirnames, filenames in os.walk(os.getcwd()):
-    print(dirpath)
-    if dirnames:
-        print(dirnames)
-    if filenames:
-        print(filenames)
-
-
-src = os.path.join(os.getcwd(), "src")
-images = []
-image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.tiff']
-
-from fnmatch import fnmatch
-
-for root, dirs, files in os.walk(src):
-    for filename in files:
-        for ext in image_extensions:
-            if fnmatch(filename, ext):
-                images.append(filename)
-
-print(images)
-
-# shutil 
-import shutil 
-
-os.chmod("log.txt", 0o444) # lecture seule 
-
-# copies
-try:
-    shutil.copyfile("log.txt", "copies\\copy1.txt")
-    shutil.copy("log.txt", "copies\\copy2.txt")
-    shutil.copy2("log.txt", "copies\\copy3.txt")
-except FileNotFoundError:
-    print("ce chemin n'existe pas")
+    print("Ce fichier n'existe pas")
 except PermissionError:
-    print("Vous n'avez pas la permission")
+    print("Vous n'avez pas les permissions")
+except IOError:
+    print("erreur sur une opération input / output")
+except Exception as e: 
+    print(e)
+else: 
+    print(content)
+finally:
+    if "f" in locals() and f:
+        f.close()
+
+    
+# context manager 
+with open("demo.txt") as f:
+    content = f.read()
+    print(content)
+
+with open("demo.txt", "r") as f: 
+    f.seek(27)
+    content = f.read(15)
+    print(content)
+    print("position du curseur :", f.tell())
+
+with open("demo.txt", "a") as f: 
+    f.write("""encore une ligne
+et une autre ligne""")
+
+# copie 
+with open("test.txt", "r") as test_file:
+    with open("copy.txt", "w") as copy_file:
+        for line in test_file:
+            copy_file.write(line)
 
 
-print(os.stat(r"copies\copy1.txt").st_mode)
-print(os.stat(r"copies\copy2.txt").st_mode)
-
-print(os.stat("log.txt").st_mtime)
-print(os.stat(r"copies\copy1.txt").st_mtime)
-print(os.stat(r"copies\copy2.txt").st_mtime)
-print(os.stat(r"copies\copy3.txt").st_mtime)
-
-try:
-    shutil.rmtree("folder")
-except FileNotFoundError:
-    print("ce chemin n'existe pas")
-
-# glob
-import glob 
-
-jpg_paths = glob.glob("src/*.jpg")
-print(jpg_paths)
-
-jpg_paths = glob.glob("src/**/*.jpg", recursive=True)
-print(jpg_paths)
-
-# Pathlb 
+# fusion
 from pathlib import Path 
+dir = Path("data")
+merged = ""
+for index, filepath in enumerate(dir.iterdir()):
+    with open(filepath, "r") as file:
+        content = file.readlines()
+        if index == 0 :
+            merged += content[0].replace("AMOUNT", "UNITS")
+        new_content = content[1:]
+        merged += "".join(new_content) + "\n"
 
-print(Path.cwd())
+with open("merged.txt", "w") as file:
+    file.write(merged)
 
-filepath = Path("dossier1")
-filepath = Path(r"C:\Users\Louis\Desktop\python\07 - système de fichiers")
-filepath = Path.cwd() / "dossier1"
-print(filepath)
-filepath = Path(__file__).parent
-print(filepath)
+# download 
+import urllib.request 
 
-# conditions
-if filepath.exists():
-    print("ce chemin existe")
+url = "https://www.python.org/static/community_logos/python-logo.png"
 
-# boucles
-for p in Path("courses").iterdir():
-    print(p)
+# response = urllib.request.urlopen(url)
+# with open("image.png", "wb") as f:
+#     f.write(response.read())
 
-root_path = Path("src")
+# response.close()
 
-for path in root_path.glob("*"):
-    print(path)
+# with urllib.request.urlopen(url) as res:
+    # with open("image.png", "wb") as f:
+    #     f.write(res.read())
 
-for path in root_path.rglob("*"):
-    print(path)
+# urllib.request.urlretrieve(url, "image.png")
 
-for path in root_path.rglob("*.jpg"):
-    print(path)
+import requests 
+response = requests.get(url)
+with open("image.png", "wb") as f:
+        f.write(response.content)
 
-for path in root_path.rglob("*.jpeg", case_sensitive=False):
-    print(path)
+# upload 
+# url = "https://file.io"
+# with open("image.png", "rb") as f:
+#     response = requests.post(url, files={"file" : f })
+#     print(response.json())
 
-# match
-logfile = Path("log.txt")
-print(logfile.match("*.txt"))
+# copie image
+with open("image.png", "rb") as image_file:
+    with open("copy.png", "wb") as copy_file:
+        chunk_size = 4096 
+        image_chunk =  image_file.read(chunk_size)
+        while len(image_chunk) > 0 :
+            copy_file.write(image_chunk)
+            image_chunk = image_file.read(chunk_size)
 
-# suppression 
-filepath = Path(__file__).parent / "dossier1" / "demo.txt"
-try:
-    filepath.unlink()
-except FileNotFoundError:
-    print("ce chemin n'existe pas")
+# archives
+import shutil 
+shutil.make_archive("archive", "zip", "data")
+shutil.unpack_archive("archive.zip", "files")
 
-# création  de fichiers
-filepath.touch()
+import zipfile 
+images_zip = zipfile.ZipFile("images.zip", "w", compression=zipfile.ZIP_DEFLATED)
+images_zip.write("image.png")
+images_zip.write("copy.png")
+images_zip.close()
 
-# création de dossiers
-Path("parent_dir/output_dir").mkdir(parents=True, exist_ok=True)
-
-# écrire et lire des fichiers
-filepath.write_text("hello")
-print(filepath.read_text())
-
-# renommage
-p = Path("renamed_demo.txt")
-p.rename("demo.txt")
-
-# déplacement 
-Path("demo.txt").replace("dossier2/demo.txt")
-
-# informations sur les chemins
-print(Path().cwd().stat().st_mtime)
-
-# propriétés utiles
-print(filepath.name)
-print(filepath.stem)
-print(filepath.suffix)
-print(filepath.parent)
-
-# évaluation 
-print(Path(__file__) == Path.cwd() / "main.py")
-
-# méthodes utiles
-print(Path("dossier1"))
-print(Path("dossier1").absolute())
-print(Path("dossier1\..").absolute())
-print(Path("dossier1\..").resolve())
-print(Path("dossier1\..").resolve().as_posix())
-
-# boucles
-src = Path.cwd() / "src"
-
-images = []
-
-image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif']
-
-for file_path in src.rglob("*"):
-    if file_path.is_file(): 
-        for ext in image_extensions:
-            if file_path.match(ext):
-                images.append(file_path.name)
-
-print(images)
+with zipfile.ZipFile("images.zip", "r") as f:
+    print(f.namelist())
+    f.extractall("images")
