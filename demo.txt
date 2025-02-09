@@ -1,6 +1,0 @@
-remplacer l'ancien contenu 
-Le nouveau contenu du fichier 
-voici un ajout d'une ligne 
-une autre ligne 
-encore une ligne
-et une autre ligne
