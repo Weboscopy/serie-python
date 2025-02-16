@@ -1,243 +1,211 @@
-# mapping 
-double_nums = []
-for n in range(1,6):
-    double_nums.append(n *2)
+# Classes 
 
-print(double_nums)
+class User:
 
-def double(n):
-    return n * 2
-
-double_nums = list(map(double, range(1,6)))
-print(double_nums)
+    def __init__(self, username, email):
+        self.username = username 
+        self.email = email 
+        self.permissions = ["view"]
+        self.status = "actif"
 
-double_nums = [double(n) for n in range(1,6)]
-print(double_nums)
+    def login(self):
+        print(f"{self.username} est maintenant connecté")
+        return self 
 
-nums = [1,2,3,4,5]
-squares_nums = []
-for n in nums:
-    squares_nums.append(n*n)
+    def has_permission(self, permission):
+        return permission in self.permissions
 
-print(squares_nums)
-
-squares_nums = list(map(lambda n : n*n, nums))
-print(squares_nums)
-
-squares_nums = [n*n for n in nums]
-print(squares_nums)
+    def show(self):
+        print(f"Nom d'utilisateur : {self.username}")
+        print(f"Email : {self.email}")
+        print(f"Permissions : {', '.join(self.permissions)}")
+        return self 
 
-# filter
-prices = [100, 90, 23, 30, 80, 12, 70, 27, 10]
+    def logout(self):
+        print(f"{self.username} est maintenant déconnecté")
+        return self 
 
-cheap_prices = []
-for p in prices:
-    if p <= 60:
-        cheap_prices.append(p)
+    def deactivate(self):
+        self.status = "inactif"
 
-print(cheap_prices)
 
-cheap_prices = list(filter(lambda p: p <= 60, prices))
-print(cheap_prices)
-
-cheap_prices = [p for p in prices if p <= 60]
-print(cheap_prices)
-cheap_prices = [p if p <= 60 else "trop cher" for p in prices]
-print(cheap_prices)
-
-# any
-temperatures = [-4, -1, 0, 12, 10, -8]
-has_positive = False 
-for temp in temperatures:
-    if temp > 0:
-        has_positive = True 
-        break 
+user1 = User("tom", "tom@mail.com")
+user2 = User("zoé", "zoé@mail.com")
 
-print(has_positive)
+user1.login()
+user2.login()
+print(user1.has_permission("view"))
+print(user2.has_permission("view"))
 
-has_positive = any(temp > 0 for temp in temperatures)
-print(has_positive)
+# Héritage 
 
-password = "Pass123!"
-has_upper = any(char.isupper() for char in password)
-print(has_upper)
-has_digit = any(char.isdigit() for char in password)
-print(has_digit)
-import string 
-has_special = any(char in string.punctuation for char in password)
-print(has_special)
+class AdminUser(User):
 
-# all
-numbers = [1, -2, 3, 4]
-all_positive = True 
-for num in numbers:
-    if num <= 0:
-        all_positive = False
-        break 
+    def __init__(self, username, email):
+        super().__init__(username, email)
+        self.permissions = ["view", "edit", "delete", "add"]
 
-print(all_positive)
+    def add_permission(self, user, permission):
+        if permission not in user.permissions:
+            user.permissions.append(permission)
+            print(f"Permission '{permission}' donnée à {user.username}")
 
-all_positive = all(num > 0 for num in numbers)
-print(all_positive)
+    # redéfinition des méthodes
+    def login(self):
+        super().login()
+        print("En tant qu'admin")
+        return self
 
-user = {
-    "username": "paul",
-    "email": "paul@mail.com",
-    "age": -2
-}
 
-def validate_user(user):
-    return all([
-        isinstance(user["username"], str) and user["username"].strip() != "",
-        isinstance(user["email"], str) and "@" in user["email"],
-        isinstance(user["age"], int) and user["age"] > 0 
-    ])
+user3 = AdminUser("paul", "paul@mail.com")
 
-print(validate_user(user))
-# sort 
-grades = [9, 7, 10, 12, 4, 18, 17, 13, 19]
+user3.login()
 
-sorted_grades = sorted(grades)
+user3.has_permission("edit")
 
-print(sorted_grades)
+user3.add_permission(user1, "delete")
+print(user1.has_permission("delete"))
 
-sorted_grades = sorted(grades, reverse=True)
-print(sorted_grades)
+user3.login()
 
-print(grades)
-grades.sort()
-print(grades)
+# Type intégré
 
-students = [("Yannis", "B"), ("Paul", "C"), ("Zoé", "A")]
+message = "Hello World"
+message = str("Hello World")
 
-sort_by_grade = lambda student : student[1]
-sorted_students = sorted(students, key=sort_by_grade)
-print(sorted_students)
-students.sort(key=sort_by_grade)
-print(students)
+print(message.upper().replace("WORLD", "PYTHON"))
 
-class Employee:
-    def __init__(self, name, age):
-        self.name = name 
-        self.age = age
+user4 = User("yanis", "yanis@mail.com")
+user4.login().show().logout()
 
-    def __repr__(self):
-        return f"Employee(name={self.name}, age={self.age})"
+print(user4.email)
+user4.email = "test@mail.com"
+print(user4.email)
 
+setattr(user4, "email", "alice@mail.com")
+user4.show()
+print(getattr(user4, "username"))
 
-e1 = Employee("Tom", 31)
-e2 = Employee("Yanis", 26)
-e3 = Employee("Zoé", 29)
+print(isinstance(user1, AdminUser))
+print(isinstance(user1, User))
 
-employess = [e1,e2,e3]
-sorted_employees = sorted(employess, key=lambda e: e.age, reverse=True)
-print(sorted_employees)
-from operator import attrgetter
-sorted_employees = sorted(employess, key=attrgetter("age") , reverse=True)
-print(sorted_employees)
+# Héritage multiples 
+from datetime import datetime
+class Logger:
 
-# reduce 
-prices =  [100, 90, 23, 30, 80, 12, 70, 27]
-total = sum(prices)
-print(total)
+    def __init__(self):
+        self.log = []
+        self.status = "INFO"
 
-import math 
-total = math.prod(prices)
-print(total)
+    def write_log(self, message):
+        self.log.append(message)
+        print(f"{datetime.now()} : {self.status} : {message}")
 
-from functools import reduce 
+    def show(self):
+        print(f"{';'.join(self.log[-3:])}")
 
-total = reduce(lambda acc, curr : acc + curr, prices, 0)
-print(total)
-total = reduce(lambda acc, curr: acc * curr, prices, 1)
-print(total)
 
+class LoggableUser(Logger, User):
+    def __init__(self, username, email):
+        User.__init__(self, username, email)
+        Logger.__init__(self)
 
-cart = [
-    {"name": "PC", "price": 999.99, "quantity": 1},
-    {"name": "Smartphone", "price": 599.99, "quantity": 2},
-    {"name": "Tablette", "price": 299.99, "quantity": 1},
-    {"name": "Casque audio", "price": 149.99, "quantity": 3},
-]
+    def deactivate_and_log(self):
+        self.write_log(f"{self.username} n'est plus actif")
+        self.deactivate()
 
 
-def calculate_total_product(product):
-    return product["price"] * product["quantity"]
+user5 = LoggableUser("noa", "noa@mail.com")
+user5.write_log("Tentative de connexion")
+user5.write_log("Message 1")
+user5.write_log("Message 2")
+user5.write_log("Message 3")
+user5.login()
+user5.show()
 
-total_cart = reduce(
-    lambda acc, product: acc + calculate_total_product(product),
-    cart,
-    0
-)
+print(user5.status)
+user5.deactivate_and_log()
+print(user5.status)
 
-print(total_cart)
+# Classes abstraites
+from abc import ABC, abstractmethod
 
-# enumerate 
-usernames = ["Yanis", "Tom", "Zoé"]
-for index, username in enumerate(usernames):
-    print(f"id {index + 1} - username {username}")
+class User(ABC):
+    def __init__(self, username, email):
+        self.username = username 
+        self.email = email 
+        self.permissions = []
+        self.status = "actif"
 
-# zip 
-passwords = ["Yanis123", "Tom123", "Zoé123"]
-emails = ["Yanis@mail.com", "tom@mail.com", "zoe@mail.com"]
+    def login(self):
+        print(f"{self.username} est maintenant connecté")
+        return self 
 
-users = list(zip(passwords, emails))
-print(users)
+    def has_permission(self, permission):
+        return permission in self.permissions
 
-for user in users :
-    print(f"Mot de passe : {user[0]} - Email : {user[1]}")
+    def show(self):
+        print(f"Nom d'utilisateur : {self.username}")
+        print(f"Email : {self.email}")
+        print(f"Permissions : {', '.join(self.permissions)}")
+        return self 
 
+    def logout(self):
+        print(f"{self.username} est maintenant déconnecté")
+        return self 
 
-keys = ["username", "email", "passwords"]
-values = ["yanis", "yanis@mail.com", "yanis123"]
+    def deactivate(self):
+        self.status = "inactif"
 
-user_dict = dict(zip(keys, values))
-print(user_dict)
+    @abstractmethod
+    def access_dashboard(self):
+        pass 
 
-# produits cartésien 
-foods = ["Pizza", "Burger", "Sushi"]
-beverages = ["Soda", "Juice", "Water"]
+# user6 = User("leo", "leo@mail.com")
 
-menus = []
-for food in foods:
-    for beverage in beverages:
-        menus.append((food, beverage))
+class AdminUser(User):
 
-print(menus)
+    def __init__(self, username, email):
+        super().__init__(username, email)
+        self.permissions = ["view", "edit", "delete", "add"]
 
-import itertools
-menus = list( itertools.product(foods, beverages))
-print(menus)
+    def add_permission(self, user, permission):
+        if permission not in user.permissions:
+            user.permissions.append(permission)
+            print(f"Permission '{permission}' donnée à {user.username}")
 
-menus = [(food, beverage) for food in foods for beverage in beverages]
-print(menus)
+    # redéfinition des méthodes
+    def login(self):
+        super().login()
+        print("En tant qu'admin")
+        return self
 
-# set comprehension
-numbers = [1,1,2,2,3,4,4,5]
+    def access_dashboard(self):
+        print("Accès complet au tableau de bord")
 
-squares_of_evens = {num**2 for num in numbers if num % 2 == 0}
-print(squares_of_evens)
+user7 = AdminUser("lia", "lia@mail.com")
 
-# dict comprehension
-temp_in_C = {"Paris": 17, "Lyon": 19, "Marseille": 25, "Nice": 30}
+user7.access_dashboard()
 
-temp_in_F = {key : round(value * 9/5 + 32) for key, value in temp_in_C.items()}
-print(temp_in_F)
 
-weather = {"Paris" : "nuageux", "Lyon": "Nuageux", "Marseille": "Ensoleillé", "Nice" : "Ensoleillé"}
-sunny_weather = {key : value for (key, value) in weather.items() if value == "Ensoleillé"}
-print(sunny_weather)
+class GuestUser(User):
+    def __init__(self, username, email):
+        super().__init__(username, email)
+        self.permissions = ["view"]
 
-cities_weather = {key : ("Chaud" if value >= 20 else "Froid") for (key, value) in temp_in_C.items()}
-print(cities_weather)
+    def access_dashboard(self):
+        print("Accès limité au tableau de bord")
 
-def check_temps(temp):
-    if temp >= 30:
-        return "Chaud"
-    elif 20 <= temp <= 25:
-        return "Beau temps"
-    else:
-        return "Froid"
 
-cities_weather = {key : check_temps(value) for (key, value) in temp_in_C.items()}
-print(cities_weather)
+# Polymorphisme 
+import time
+def show_dashboard(user : User):
+    print("accès au tableau de bord")
+    time.sleep(3)
+    user.access_dashboard()
+
+admin = AdminUser("admin1", "admin1@mail.com")
+guest = GuestUser("guest1", "guest@mail.com")
+
+show_dashboard(admin)
+show_dashboard(guest)
